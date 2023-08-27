@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-+)0vos6@f()*xs-+&o52!0j=d$yd=k6bf^p@7=+7jm#r4gg=w%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [  '*' ]
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 SITE_ID = 1
@@ -71,7 +71,7 @@ INSTALLED_APPS = [
     'sekizai',
 
     # -- my applications ---
-    #'my_blog_app'
+    'my_blog_app'
 
 
 ]
@@ -125,9 +125,22 @@ WSGI_APPLICATION = 'my_blog_project.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    'default': { # This is th default database, you can keep only this in django (but in djangocms it won't work, you need the second below)
+        'ENGINE': os.environ.get("DJANGO_SETTING_DATABASE_ENGINE"),
+        'NAME': os.environ.get("DJANGO_SETTING_DATABASE_NAME"),
+        'HOST': os.environ.get("DJANGO_SETTING_DATABASE_HOST"), #this must be he same as database service name inside your docker-compose file
+        'PASSWORD':  os.environ.get("DJANGO_SETTING_DATABASE_ROOT_PASSWORD"),
+        'PORT': os.environ.get("DJANGO_SETTING_DATABASE_PORT"),
+        'USER': os.environ.get("DJANGO_SETTING_DATABASE_ROOT_USER")
+    },
+
+    '{}'.format(os.environ.get("DJANGO_SETTING_DATABASE_NAME")): {#if we don't set this, djangocms won't work
+        'ENGINE': os.environ.get("DJANGO_SETTING_DATABASE_ENGINE"),
+        'NAME': os.environ.get("DJANGO_SETTING_DATABASE_NAME"),
+        'HOST': os.environ.get("DJANGO_SETTING_DATABASE_HOST"), #this must be he same as database service name inside your docker-compose file
+        'PASSWORD':  os.environ.get("DJANGO_SETTING_DATABASE_ROOT_PASSWORD"),
+        'PORT': os.environ.get("DJANGO_SETTING_DATABASE_PORT"),
+        'USER': os.environ.get("DJANGO_SETTING_DATABASE_ROOT_USER")
     }
 }
 
